@@ -60,7 +60,7 @@ The tests are built using Cypress and follow the Page Object Model (POM) design 
    ```
 3. Configure environment variables for credentials (required):
    
-   Option 1: Create a `cypress.env.json` file (recommended for local development):
+   Option 1: Create a `cypress.env.json` file (**recommended for local development**):
    ```json
    {
      "USERNAME": "user1",
@@ -93,6 +93,7 @@ The tests are built using Cypress and follow the Page Object Model (POM) design 
    ```bash
    npx cypress open
    ```
+   Select Chrome for E2E testing.
 
 ## Test Coverage
 
