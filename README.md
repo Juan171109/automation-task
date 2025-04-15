@@ -29,6 +29,8 @@ The tests are built using Cypress and follow the Page Object Model (POM) design 
 │   └── cypress.yml              # GitHub Actions workflow
 ├── cypress.config.js            # Cypress configuration
 ├── cypress.env.json             # Environment variables (not in git)
+├── .eslintrc.json               # eslint tool configuration
+├── .gitignore                   # Git ignore list
 ├── package.json                 # Project dependencies
 └── README.md                    # Project Instruction documentation
 └── SECURITY.md                  # Project Security notes
