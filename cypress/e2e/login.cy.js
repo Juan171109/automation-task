@@ -1,34 +1,39 @@
-// cypress/e2e/login.spec.js
+// cypress/e2e/login.cy.js
+import LoginPage from '../pages/LoginPage'
 
 describe('Login Page', () => {
   beforeEach(() => {
-    cy.visit('/')
+    LoginPage.visit()
   })
   
   it('should show the login form', () => {
-    cy.get('#loginForm').should('be.visible')
-    cy.get('#username').should('be.visible')
-    cy.get('#password').should('be.visible')
-    cy.get('button[type="submit"]').should('be.visible')
+    cy.get(LoginPage.usernameInput).should('be.visible')
+    cy.get(LoginPage.passwordInput).should('be.visible')
+    cy.get(LoginPage.submitButton).should('be.visible')
   })
   
   it('should login with valid credentials', () => {
-    cy.get('#username').type('user1')
-    cy.get('#password').type('user1')
-    cy.get('button[type="submit"]').click()
+    // Using environment variables for credentials
+    const username = Cypress.env('USERNAME') || 'user1'
+    const password = Cypress.env('PASSWORD') || 'user1'
+    
+    LoginPage
+      .typeUsername(username)
+      .typePassword(password)
+      .submit()
     
     // Verify redirection to shop page
     cy.url().should('include', '/shop')
   })
   
   it('should show error message with invalid credentials', () => {
-    cy.get('#username').type('wronguser')
-    cy.get('#password').type('wrongpass')
-    cy.get('button[type="submit"]').click()
+    LoginPage
+      .typeUsername('wronguser')
+      .typePassword('wrongpass')
+      .submit()
     
     // Verify error message
-    cy.get('#errorMessage').should('be.visible')
-      .and('have.text', 'Invalid username or password')
+    LoginPage.verifyErrorMessage('Invalid username or password')
     
     // Verify we stay on login page
     cy.url().should('include', '/')
@@ -36,11 +41,11 @@ describe('Login Page', () => {
   
   it('should require username and password fields', () => {
     // HTML5 validation check (required attribute)
-    cy.get('#username').should('have.attr', 'required')
-    cy.get('#password').should('have.attr', 'required')
+    cy.get(LoginPage.usernameInput).should('have.attr', 'required')
+    cy.get(LoginPage.passwordInput).should('have.attr', 'required')
     
     // Try submitting with empty fields
-    cy.get('button[type="submit"]').click()
+    LoginPage.submit()
     cy.url().should('include', '/')
   })
 })

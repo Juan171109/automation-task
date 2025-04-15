@@ -1,12 +1,48 @@
-# Mock Shop Test Automation - README
+# Mock Shop Test Automation
 
-## Setup Instructions
+## Overview
 
-### Prerequisites
+This project contains automated tests for a mock e-commerce website with three main pages:
+- Login Page
+- Shop Page
+- Basket Page
+
+The tests are built using Cypress and follow the Page Object Model (POM) design pattern for better maintainability and reusability.
+
+## Project Structure
+
+```
+├── cypress/
+│   ├── e2e/                     # Test files
+│   │   ├── login.cy.js          # Login page tests
+│   │   ├── shop.cy.js           # Shop page tests
+│   │   └── basket.cy.js         # Basket page tests
+│   ├── fixtures/                # Test data files
+│   ├── pages/                   # Page Object Models
+│   │   ├── LoginPage.js         # Login page object
+│   │   ├── ShopPage.js          # Shop page object
+│   │   └── BasketPage.js        # Basket page object
+│   └── support/                 # Global support files
+│       ├── commands.js          # Custom commands
+│       └── e2e.js               # Global configuration
+├── .github/workflows/           # CI/CD configuration
+│   └── cypress.yml              # GitHub Actions workflow
+├── cypress.config.js            # Cypress configuration
+├── cypress.env.json             # Environment variables (not in git)
+├── package.json                 # Project dependencies
+└── README.md                    # Project Instruction documentation
+└── SECURITY.md                  # Project Security notes
+```
+
+## Prerequisites
+
 - Node.js (v14 or later)
 - NPM (v6 or later)
 
+## Setup Instructions
+
 ### Setting up the Mock Shop
+
 1. Place all the provided files (`index.html`, `shop.html`, `basket.html`, `styles.css`, and `script.js`) in a single directory
 2. Serve the files locally using one of these methods:
    - Using NPX: `npx serve`
@@ -14,35 +50,38 @@
    - Any other local server of your choice
 
 ### Setting up Cypress
-1. Create a new directory for your test project
-2. Navigate to that directory in your terminal
-3. Initialize an npm project:
-   ```bash
-   npm init -y
-   ```
-4. Install Cypress:
-   ```bash
-   npm install cypress --save-dev
-   ```
-5. Open Cypress to generate the initial folder structure:
-   ```bash
-   npx cypress open
-   ```
-6. Configure Cypress:
-   - Create or modify the `cypress.config.js` file in the root directory:
-   ```javascript
-   const { defineConfig } = require('cypress')
 
-   module.exports = defineConfig({
-     e2e: {
-       baseUrl: 'http://localhost:3000', // Update with your local server URL
-       viewportWidth: 1280,
-       viewportHeight: 800,
-     },
-   })
+1. Clone this repository
+2. Install dependencies:
+   ```bash
+   npm install
    ```
+3. Configure environment variables for credentials (required):
+   
+   Option 1: Create a `cypress.env.json` file (recommended for local development):
+   ```json
+   {
+     "USERNAME": "user1",
+     "PASSWORD": "user1",
+     "BASE_URL": "http://localhost:3000"
+   }
+   ```
+   This file is automatically excluded from git via .gitignore to prevent credentials from being committed.
+   
+   Option 2: Set environment variables when running Cypress:
+   ```bash
+   CYPRESS_USERNAME=user1 CYPRESS_PASSWORD=user1 CYPRESS_BASE_URL=http://localhost:3000 npx cypress run
+   ```
+   
+   Option 3: For CI/CD pipelines, set secrets in your platform:
+   - GitHub Actions: Use repository secrets
+   - Jenkins: Use credentials store
+   - GitLab CI: Use CI/CD variables
+   
+   ⚠️ **Security Note**: The tests will fail if USERNAME and PASSWORD environment variables are not provided. Never commit actual credentials to your repository.
 
-### Running the Tests
+## Running the Tests
+
 1. Start your local server to serve the mock shop files
 2. Run Cypress tests in headless mode:
    ```bash
@@ -53,34 +92,89 @@
    npx cypress open
    ```
 
-## Test Cases
+## Test Coverage
 
 ### Login Tests
 - Valid login credentials redirect to Shop page
 - Invalid username or password shows error message
 - Empty form validation
+- Required field validation
 
 ### Shop Page Tests
-- Verify all products are displayed correctly with all required information
-- Search functionality filters products correctly
-- Adding a product to basket shows alert and updates localStorage
-- View Basket button navigates to Basket page
-- Logout clears basket and redirects to Login page
+- Verification of products display with all required information
+- Search functionality by product code
+- Search functionality by product description
+- Case-insensitive search capability
+- Adding products to basket
+- Alert confirmation when adding products
+- Navigation to Basket page
+- Logout functionality and basket clearing
+- LocalStorage persistence of basket items after shop page refresh
+- LocalStorage persistence of basket items while navigating between pages
+- LocalStorage persistence of basket items using browser navigation controls(back/forward buttons)
 
 ### Basket Page Tests
-- Basket displays all added products with correct information
-- Total calculation is accurate based on price and quantity
-- Empty basket shows appropriate message and $0.00 total
-- Clear Basket button removes all items and shows alert
-- Back to Shop button navigates to Shop page
-- Logout clears basket and redirects to Login page
+- Basket content verification with all product details
+- Total calculation accuracy for single and multiple items
+- Empty basket handling and messaging
+- Basket operations (clear, navigation)
+- Basket clearing confirmation alerts
+- Navigation back to shop
+- Logout functionality from basket page
+- Persistence of basket content across page reloads in basket pages
+- Persistence of basket content when adding multiple products across page reloads
+
 
 ### E2E User Journey Tests
-- Complete shopping flow: login → add products → view basket → logout
+- Complete shopping flow from login to logout:
+  - User authentication
+  - Product search
+  - Adding multiple products
+  - Viewing basket contents
+  - Verifying correct total calculation
+  - Returning to shopping
+  - Logging out securely
+- Session preservation between tests
+- Form submission and validation
+- Alert handling and verification
 
-## Observed Issues
+## CI/CD Integration
 
-1. UOM inconsistency: There appears to be code that can modify the UOM from "kg" to "g" for certain products when added to the basket under specific conditions.
-2. Price modification: The code contains logic that can adjust the price of certain products when added to the basket.
+This project includes a GitHub Actions workflow that:
+1. Runs on pushes to main/master/develop branches
+2. Runs on pull requests to these branches
+3. Runs daily at midnight UTC
+4. Tests across multiple browsers (Chrome, Firefox, Edge)
+5. Uploads screenshots and videos as artifacts when tests fail
 
-These inconsistencies are tested and documented but not fixed as per the instructions.
+To use GitHub Actions with this workflow:
+1. Push this repository to GitHub
+2. Add secrets in your GitHub repository settings (Settings > Secrets and variables > Actions):
+   - `CYPRESS_USERNAME`: The username for the test account
+   - `CYPRESS_PASSWORD`: The password for the test account
+   - `CYPRESS_BASE_URL`: The URL where your application is deployed
+
+These secrets are encrypted and only exposed during workflow runs. They are not accessible in pull requests from forks for security reasons.
+
+**Important Security Notes:**
+- Never store actual credentials in your code or config files
+- Always use environment variables or secure secret stores
+- Consider using a dedicated test account with limited permissions
+- Rotate credentials periodically
+- For production testing, consider using a more secure authentication method
+
+## Identified Issues
+
+1. The default shop page doesn't display products until a search is performed.
+2. The basket empty message may not display correctly.
+3. Add product to basket，the Qty did not change.
+4. The basket page can not show added items.
+
+## Best Practices Implemented
+
+- **Page Object Model**: Separates test logic from page interactions
+- **Custom Commands**: Reusable login and session handling
+- **Session Management**: Optimized test performance by preserving login state
+- **Environment Variables**: Secure credential management
+- **CI/CD Integration**: Automated test execution in multiple environments
+- **Cross-browser Testing**: Ensures application works across different browsers

@@ -1,0 +1,23 @@
+# note temperary files
+backup/
+
+# Node dependencies
+node_modules/
+
+# Cypress generated files
+cypress/videos/
+cypress/screenshots/
+cypress/downloads/
+
+# Environment files with sensitive data
+cypress.env.json
+
+# OS specific files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.idea/
+.vscode/
+*.sublime-*
+

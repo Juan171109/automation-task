@@ -1,0 +1,62 @@
+name: Cypress Tests
+
+on:
+  push:
+    branches: [ main, master, develop ]
+  pull_request:
+    branches: [ main, master, develop ]
+  schedule:
+    # Run every day at 00:00 UTC
+    - cron: '0 0 * * *'
+
+jobs:
+  cypress-run:
+    runs-on: ubuntu-latest
+    strategy:
+      # When one test fails, continue with the rest
+      fail-fast: false
+      matrix:
+        # Run tests in multiple browsers
+        browser: [chrome, firefox, edge]
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Start server
+        run: npx serve . &
+        # We'll start a simple HTTP server for our static files
+
+      - name: Cypress run
+        uses: cypress-io/github-action@v6
+        with:
+          browser: ${{ matrix.browser }}
+          record: false # Set to true if using Cypress Dashboard
+        env:
+          # Pass GitHub secrets to the Cypress env
+          CYPRESS_USERNAME: ${{ secrets.CYPRESS_USERNAME }}
+          CYPRESS_PASSWORD: ${{ secrets.CYPRESS_PASSWORD }}
+
+      - name: Upload screenshots
+        uses: actions/upload-artifact@v3
+        if: failure()
+        with:
+          name: cypress-screenshots-${{ matrix.browser }}
+          path: cypress/screenshots
+          if-no-files-found: ignore
+
+      - name: Upload videos
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: cypress-videos-${{ matrix.browser }}
+          path: cypress/videos
+          if-no-files-found: ignore
