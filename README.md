@@ -19,9 +19,9 @@ The tests are built using Cypress and follow the Page Object Model (POM) design 
 │   │   └── basket.cy.js         # Basket page tests
 │   ├── fixtures/                # Test data files
 │   ├── pages/                   # Page Object Models
-│   │   ├── LoginPage.js         # Login page object
-│   │   ├── ShopPage.js          # Shop page object
-│   │   └── BasketPage.js        # Basket page object
+│   │   ├── loginPage.js         # Login page object
+│   │   ├── lhopPage.js          # Shop page object
+│   │   └── basketPage.js        # Basket page object
 │   └── support/                 # Global support files
 │       ├── commands.js          # Custom commands
 │       └── e2e.js               # Global configuration
