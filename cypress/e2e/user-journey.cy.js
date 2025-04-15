@@ -1,7 +1,7 @@
 // cypress/e2e/user-journey.cy.js
-import LoginPage from '../pages/LoginPage'
-import ShopPage from '../pages/ShopPage'
-import BasketPage from '../pages/BasketPage'
+import LoginPage from '../pages/loginPage'
+import ShopPage from '../pages/shopPage'
+import BasketPage from '../pages/basketPage'
 
 describe('Complete User Journey', () => {
   beforeEach(() => {
@@ -10,6 +10,11 @@ describe('Complete User Journey', () => {
   })
   
   it('should allow a user to login, search, add products, and checkout', () => {
+    // Mock alert
+    const stub = cy.stub()
+    cy.on('window:alert', stub)
+  
+    
     // 1. Login
     const username = Cypress.env('USERNAME') || 'user1'
     const password = Cypress.env('PASSWORD') || 'user1'
@@ -30,15 +35,16 @@ describe('Complete User Journey', () => {
     // 3. Add product to basket
     ShopPage.addProductToBasket('Fresh Apples')
     
-    // Verify alert (product added)
-    cy.on('window:alert', (text) => {
-      expect(text).to.include('added to basket!')
+    // Verify alert message
+    cy.then(() => {
+      expect(stub.getCall(0)).to.be.calledWith(`Fresh Apples added to basket!`)
     })
     
     // 4. Go back to all products
-    ShopPage.search('')
+    ShopPage.clickSearchButton()
     
     // 5. Add another product
+    ShopPage.search('Bananas')
     ShopPage.addProductToBasket('Organic Bananas')
     
     // 6. Navigate to basket

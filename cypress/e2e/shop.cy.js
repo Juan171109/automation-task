@@ -1,6 +1,6 @@
 // cypress/e2e/shop.cy.js
-import ShopPage from '../pages/ShopPage'
-import BasketPage from '../pages/BasketPage'
+import ShopPage from '../pages/shopPage'
+import BasketPage from '../pages/basketPage'
 
 describe('Shop Page', () => {
   beforeEach(() => {

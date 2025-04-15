@@ -95,10 +95,27 @@ The tests are built using Cypress and follow the Page Object Model (POM) design 
 ## Test Coverage
 
 ### Login Tests
-- Valid login credentials redirect to Shop page
-- Invalid username or password shows error message
-- Empty form validation
-- Required field validation
+- UI Elements Verification
+   - Should show the login form with all required elements
+- Valid Login Scenario
+   - Should login with valid credentials
+- Invalid Credentials Handling
+   - Should show error message with invalid username
+   - Should show error message with invalid password
+- Form Validation
+   - Should require username field
+   - Should require password field
+- Credential Format Handling
+   - Should handle case-sensitivity in credentials
+   - Should trim whitespace in username field
+   - Should handle special characters in credentials
+   - Should handle very long input values
+- Form Behavior
+   - Should clear form fields after failed login attempt
+   - Should not show password in clear text
+- Access Control
+   - Should redirect to login page if accessing shop page without authentication
+   - Should redirect to login page if accessing basket page without authentication
 
 ### Shop Page Tests
 - Verification of products display with all required information
@@ -138,6 +155,8 @@ The tests are built using Cypress and follow the Page Object Model (POM) design 
 - Form submission and validation
 - Alert handling and verification
 
+## Failed tests are caused by bugs features
+
 ## CI/CD Integration
 
 This project includes a GitHub Actions workflow that:
@@ -165,10 +184,15 @@ These secrets are encrypted and only exposed during workflow runs. They are not 
 
 ## Identified Issues
 
-1. The default shop page doesn't display products until a search is performed.
-2. The basket empty message may not display correctly.
-3. Add product to basket，the Qty did not change.
-4. The basket page can not show added items.
+1. Shop: The default shop page doesn't display products until a search is performed.
+2. Basket: The basket empty message may not display correctly.
+3. Basket: Add product to basket，the Qty did not change.
+4. BasketThe basket page can not show added items.
+5. Login: Trim whitespace in username field when user login is not implemented.
+6. Login: Form fields are cleared after failed login attempt.
+7. Login: Redirect to shop page if accessing shop page without authentication.
+8. Login: Redirect to basket page if accessing basket page without authentication.
+9. User Journey: Same issue as known for adding products to basket.
 
 ## Best Practices Implemented
 
